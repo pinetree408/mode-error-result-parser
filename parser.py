@@ -1,7 +1,12 @@
+# -*- coding: utf-8 -*-
 file_path = '../result_test.txt'
 
 fr = open(file_path, 'r')
-lines = fr.readlines()
+initial_lines = fr.readlines()
+
+lines = []
+for line in initial_lines:
+    lines.append(line.split('\n')[0])
 
 index_result = []
 
@@ -22,9 +27,63 @@ for i in range(len(index_result)):
     if i == len(index_result) - 1:
         b = len(lines) - 1
     else:
-        b = index_result[i + 1] - 1
+        b = index_result[i + 1]
     range_result.append([a, b])
 
-print range_result
+convert_index = []
+for item in range_result:
+    for i in range(item[0], item[1]):
+        if i == (item[1] - 1):
+            continue
+        rs_splitted = lines[i].split('keyText=')[1]
+        sp_splitted = lines[i+1].split('keyText=')[1]
+        if rs_splitted == 'Right Meta' and sp_splitted == '␣':
+            convert_index.append([i, item[0]])
+
+import copy
+final = {}
+for item in convert_index:
+   index = item[0]
+   before = lines[index-2].split('keyText=')[1]
+   after = lines[index+3].split('keyText=')[1]
+   if before == '⌫' or after == '⌫':
+       if item[1] in final.keys():
+           updated = copy.deepcopy(final[item[1]])
+           updated.append(index-item[1])
+           del final[item[1]]
+           final[item[1]] = updated
+       else:
+           final[item[1]] = [index-item[1]]
+
+first_length = []
+for key in final.keys():
+    first_length.append(final[key][0])
+
+min = first_length[0]
+max = first_length[0]
+sum = 0.0
+
+percent_list = [0.0 for i in range(10)]
+
+for item in first_length:
+    sum += item
+    if min > item:
+        min = item
+    if max <  item:
+        max = item
+    index = item / 10
+    if item % 10 == 0:
+        index -= 1
+    if index > 9:
+        continue
+    percent_list[index] += 1
+
+for i in range(len(percent_list)):
+    percent_list[i] /= len(first_length)
+    percent_list[i] *= 100
+
+print len(first_length)
+print min, max, sum/len(first_length)
+print percent_list
 
 fr.close()
