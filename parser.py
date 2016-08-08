@@ -40,6 +40,8 @@ for item in range_result:
         if rs_splitted == 'Right Meta' and sp_splitted == '␣':
             convert_index.append([i, item[0]])
 
+print len(convert_index)
+
 import copy
 final = {}
 for item in convert_index:
@@ -54,6 +56,16 @@ for item in convert_index:
            final[item[1]] = updated
        else:
            final[item[1]] = [index-item[1]]
+
+import collections
+od = collections.OrderedDict(sorted(final.items()))
+##print od
+
+initial_length = 0
+for key in final.keys():
+    initial_length += len(final[key])
+print initial_length
+
 
 first_length = []
 for key in final.keys():
