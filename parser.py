@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+
+import copy
+import re
+import collections
+
 file_path = '../result_test.txt'
 
 fr = open(file_path, 'r')
@@ -42,29 +47,26 @@ for item in range_result:
 
 print len(convert_index)
 
-import copy
-import re
 final = {}
 for item in convert_index:
-   index = item[0]
-   before = lines[index-2].split('keyText=')[1]
-   after = lines[index+3].split('keyText=')[1]
-   if before == '⌫' or after == '⌫':
-       real = 0
-       for i in range(item[1], index):
-           key_text = lines[i].split('keyText=')[1]
-           english = re.compile('[A-Z]')
-           if len(english.findall(key_text)) == 1:
-	       real += 1
-       if item[1] in final.keys():
-           updated = copy.deepcopy(final[item[1]])
-           updated.append(real)
-           del final[item[1]]
-           final[item[1]] = updated
-       else:
-           final[item[1]] = [real]
+    index = item[0]
+    before = lines[index-2].split('keyText=')[1]
+    after = lines[index+3].split('keyText=')[1]
+    if before == '⌫' or after == '⌫':
+        real = 0
+        for i in range(item[1], index):
+            key_text = lines[i].split('keyText=')[1]
+            english = re.compile('[A-Z]')
+            if len(english.findall(key_text)) == 1:
+                real += 1
+        if item[1] in final.keys():
+            updated = copy.deepcopy(final[item[1]])
+            updated.append(real)
+            del final[item[1]]
+            final[item[1]] = updated
+        else:
+            final[item[1]] = [real]
 
-import collections
 od = collections.OrderedDict(sorted(final.items()))
 print od
 
@@ -88,7 +90,7 @@ for item in first_length:
     sum += item
     if min > item:
         min = item
-    if max <  item:
+    if max < item:
         max = item
     index = item / 10
     if item != 0 and item % 10 == 0:
