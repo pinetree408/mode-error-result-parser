@@ -60,13 +60,17 @@ for item in convert_index:
             english = re.compile('[A-Z]')
             if len(english.findall(key_text)) == 1:
                 real += 1
-        if item[1] in final.keys():
-            updated = copy.deepcopy(final[item[1]])
-            updated.append(real)
-            del final[item[1]]
-            final[item[1]] = updated
-        else:
-            final[item[1]] = [real]
+	    elif key_text == '␣':
+                real = -1
+		break
+        if real != -1:
+	    if item[1] in final.keys():
+                updated = copy.deepcopy(final[item[1]])
+                updated.append(real)
+                del final[item[1]]
+                final[item[1]] = updated
+            else:
+                final[item[1]] = [real]
 
 od = collections.OrderedDict(sorted(final.items()))
 print od
