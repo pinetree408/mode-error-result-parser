@@ -4,6 +4,7 @@ import copy
 import re
 import collections
 
+# path variable for parsed result
 file_path = '../result_test.txt'
 
 fr = open(file_path, 'r')
