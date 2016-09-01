@@ -47,12 +47,19 @@ for item in range_result:
 
 print len(convert_index)
 
+
+
+full = 0
+recover = 0
+
 final = {}
 for item in convert_index:
     index = item[0]
     before = lines[index-1].split('-')[1]
     after = lines[index+1].split('-')[1]
     if before == 'Backspace' or after == 'Backspace':
+
+        full += 1
         real = 0
         for i in range(item[1], index):
             key_text = lines[i].split('-')[1]
@@ -70,6 +77,11 @@ for item in convert_index:
                 final[item[1]] = updated
             else:
                 final[item[1]] = [real]
+
+    if after == 'Backspace':
+        recover += 1
+
+print full, recover
 
 od = collections.OrderedDict(sorted(final.items()))
 print od
