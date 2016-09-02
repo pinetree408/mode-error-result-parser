@@ -5,7 +5,7 @@ import re
 import collections
 
 # path variable for parsed result
-file_path = '../result.txt'
+file_path = '../result_2.txt'
 
 fr = open(file_path, 'r')
 initial_lines = fr.readlines()
@@ -48,15 +48,21 @@ for item in range_result:
 print len(convert_index)
 
 
-
 full = 0
 recover = 0
+
+learning_curve = {}
+
 
 final = {}
 for item in convert_index:
     index = item[0]
     before = lines[index-1].split('-')[1]
     after = lines[index+1].split('-')[1]
+
+    full_learn = 0
+    recover_learn = 0
+
     if before == 'Backspace' or after == 'Backspace':
 
         full += 1
@@ -77,9 +83,47 @@ for item in convert_index:
                 final[item[1]] = updated
             else:
                 final[item[1]] = [real]
+                full_learn = 1
+
+        #full_learn = 1
 
     if after == 'Backspace':
         recover += 1
+	recover_learn = 1
+
+    date_set = lines[index].split('-')[0].split(' ')[3].split(':')[0:2]
+    #date = lines[index].split('-')[0].split(' ')[2]
+    date = lines[index].split('-')[0].split(' ')[2] + '-' + ':'.join(date_set)
+    #date = ':'.join(date_set)
+
+    if date in learning_curve.keys():
+        updated = copy.deepcopy(learning_curve[date])
+	remake = {
+	    'full': updated['full'] + full_learn, 
+	    'recover': updated['recover'] + recover_learn
+	}
+	del learning_curve[date]
+	learning_curve[date] = remake
+    else:
+        remake = {
+	    'full': full_learn, 
+	    'recover': recover_learn
+	}
+	learning_curve[date] = remake
+
+
+print learning_curve
+
+for key in learning_curve.keys():
+    date = key.split('-')[0]
+    time = key.split('-')[1]
+    full = learning_curve[key]['full']
+    recover = learning_curve[key]['recover']
+
+    if full != 0:
+        percent = (recover / (full * 1.0)) * 100
+        print date + ' ' + time + ' ' + str(percent) + ' ' + str(full) + ' ' + str(recover)
+
 
 print full, recover
 
