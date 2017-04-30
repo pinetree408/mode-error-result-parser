@@ -5,7 +5,7 @@ import re
 import collections
 
 # path variable for parsed result
-file_path = '../result_2.txt'
+file_path = '../prevent_recover/result.txt'
 
 fr = open(file_path, 'r')
 initial_lines = fr.readlines()
@@ -21,7 +21,7 @@ for i in range(len(lines)):
     line = lines[i]
     splitted = line.split('-')
 
-    log_prog = splitted[len(splitted)-1]
+    log_prog = splitted[3]
     if previous != log_prog:
         previous = log_prog
         index_result.append(i)
@@ -112,8 +112,9 @@ for item in convert_index:
 	learning_curve[date] = remake
 
 
-print learning_curve
+#print learning_curve
 
+'''
 for key in learning_curve.keys():
     date = key.split('-')[0]
     time = key.split('-')[1]
@@ -123,9 +124,29 @@ for key in learning_curve.keys():
     if full != 0:
         percent = (recover / (full * 1.0)) * 100
         print date + ' ' + time + ' ' + str(percent) + ' ' + str(full) + ' ' + str(recover)
+'''
 
+reorder = {}
+for key in learning_curve.keys():
+    date = key.split('-')[0]
+    full = learning_curve[key]['full']
+    recover = learning_curve[key]['recover']
+    if date in reorder.keys():
+        updated = copy.deepcopy(reorder[date])
+	remake = {
+	    'full': updated['full'] + full, 
+	    'recover': updated['recover'] + recover
+	}
+	del reorder[date]
+	reorder[date] = remake
+    else:
+        remake = {
+	    'full': full, 
+	    'recover': recover
+	}
+	reorder[date] = remake
 
-print full, recover
+print reorder
 
 od = collections.OrderedDict(sorted(final.items()))
 print od
